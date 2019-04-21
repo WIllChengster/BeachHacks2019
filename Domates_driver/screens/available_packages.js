@@ -12,22 +12,31 @@ export default class AvailablePackages extends Component{
     }
 
     componentDidMount = () => {
-        fetch('URL/driver/looking')
-        //fetch THEN set state to our results.
-        this.setState({
-            loading: false
+        fetch('http://10.0.2.2:3000/driver/looking', {
+            method: 'GET',
+            dataType: 'json',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }).then(res => res.json()).then(resJson => {
+            this.setState({
+                loading: false,
+                packages: resJson
+            })
         })
+
     }
 
     selectPackage = (package_id) => {
-        fetch('URL/driver/select', {
-            method: 'POST',
-            body: {
-                id: package_id
-            }
-        }).then( (res) => {
-            //do something
-        })
+        // fetch('http://localhost', {
+        //     method: 'POST',
+        //     body: {
+        //         id: package_id
+        //     }
+        // }).then( (res) => {
+        //     //do something
+        // })
     }
 
     render = () => {
@@ -35,8 +44,8 @@ export default class AvailablePackages extends Component{
 
         const package_map = this.state.packages.map((item, index) => {
             return(
-                <View>
-                    <Text>Its a package!</Text>
+                <View key={index} >
+                    <Text>{item.Package_Description}</Text>
                 </View>
             )
         })
@@ -53,6 +62,7 @@ export default class AvailablePackages extends Component{
             <View style={styles.container} >
                 <Text style={styles.title} >Packges Ready for Delivery</Text>
                 {loading}
+                {package_map}
             </View>
         )
     }
