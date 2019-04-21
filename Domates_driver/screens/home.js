@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 
 export default class Home extends Component {
+    static navigationOptions = {
+        header: null
+    }
     render() {
         // console.log(this.props)
         return (
