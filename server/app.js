@@ -24,7 +24,8 @@ function addUserInfo(User_name, pkg_desc, addy, lat, long){
         Package_Description : pkg_desc,
         Address: addy,
         Latitude: lat,
-        Longitude: long
+        Longitude: long,
+        complete: false
     })
 
 }
@@ -40,11 +41,12 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 // Use = for int and others
 //Use : for strings
 const example_request = {
-    Name : "Buzz Lightyear",
+    Name : "Buzz THICCyear",
     Package_description : "Socks",
     Latitude : 33.738690,
     Longitude : -117.837820,
-    Address : "10091 Montego way, Santa Ana Ca"
+    Address : "10091 Montego way, Santa Ana Ca",
+    complete : false
     
 }
 
@@ -59,6 +61,7 @@ app.get('/client/request', function(req, res){
     let Latitude = req.body.Latitude
     let Longitude = req.body.Longitude
     let Address = req.body.Address
+    let complete = false
 
     addUserInfo(Name, Package_description, Address, Latitude, Longitude)
 
@@ -71,7 +74,10 @@ app.get('/driver/looking', function (req, res) {
         .then((snapshot) => {
             let documents = []
             snapshot.forEach((doc) => {
-                documents.push(doc.data())             
+                if(doc.data().complete != true){
+                    documents.push(doc.data())
+                }
+                             
             });
             res.json(documents)
 
@@ -107,11 +113,13 @@ app.post('/package/deliver', (req, res) => {
                     console.log(res.data.results[0].vicinity)
                     console.log(res.data.results[1].vicinity)
                     console.log(res.data.results[2].vicinity)
+                    
                     }
                     else{
                         console.log("There are no donation centers in range!")
                     }
                 })
+            var updateComplete = pkgRef.update({complete: true}) ;   
             }
         })
         .catch(err => {
