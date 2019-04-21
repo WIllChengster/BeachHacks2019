@@ -56,10 +56,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
 //This occurs when the client puts in a request for their donation to be picked up
-<<<<<<< HEAD
-app.get('/client/request', function(req, res){
-    
-=======
+
 app.post('/client/request', function(req, res){
     //req.body = example_request;
 >>>>>>> b698a4acc3c88773566a6e455cd9c14d34381408
