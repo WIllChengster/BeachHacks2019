@@ -41,7 +41,7 @@ export default class AvailablePackages extends Component{
                 id:id.toString()
             })
         }).then( res => res.json().then(resJson => {
-            this.props.navigation.navigate('Drive', {
+            this.props.navigation.navigate('ChooseLocation', {
                 data: resJson
             } )
         }))
@@ -70,7 +70,6 @@ export default class AvailablePackages extends Component{
                 <Text style={styles.title} >Packges Ready for Delivery</Text>
                 <View style={styles.package_container} >
                     {loading}
-                    {/* {package_map} */}
                     <FlatList
                         data={this.state.packages}
                         keyExtractor={this._keyExtractor}
@@ -85,7 +84,7 @@ export default class AvailablePackages extends Component{
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // justifyContent: 'center',
+        justifyContent: 'center',
         backgroundColor: '#F5FCFF',
         alignItems: 'stretch',
 
@@ -96,7 +95,7 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     loading: {
-        width: 10
+        width: 10,
     },
     package_container: {
         flex: 1,
