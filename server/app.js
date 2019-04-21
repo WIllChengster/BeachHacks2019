@@ -29,49 +29,6 @@ function addUserInfo(User_name, pkg_desc, addy, lat, long){
 
 }
 
-
-
-//This is to reads all information from database 
-
-function ReturnDatabase(){
-    db.collection('packages').get()
-    .then((snapshot) => {
-
-        
-     snapshot.forEach((doc) => {
-          return doc.data()
-     });
-     })
-     .catch((err) => {
-      console.log('Error getting documents', err);
-     });
-
-};
-
-//Returns one user and all their respective data.
-function ReturnOneUser(User_name){
-    var usersRef = db.collection('packages').doc(User_name);
-    var getDoc = usersRef.get()
-        .then(doc => {
-            if (!doc.exists) {
-            console.log('No such document!');
-            } else {
-            console.log('Document data:', doc.data());
-            console.log('Document address:', doc.get('Address'));
-            Name = doc.get(Name)
-            Package_Description = doc.get(Package_Description)
-            Address = doc.get(Address)
-            Latitude = doc.get(Latitude)
-            Longitude = doc.get(Longitude)
-        }
-        })
-        .catch(err => {
-            console.log('Error getting document', err);
-        });
-};
-
-
-
 ///////////////////////////////// test ^^^
 
 
@@ -166,6 +123,7 @@ app.post('/package/deliver', (req, res) => {
     res.end()
 })
 
+//Update account 
 app.post('/user/update', (req, res) => {
     firebase.auth().updateUser(uid=req.body.uid, {
         
@@ -185,6 +143,7 @@ app.post('/user/update', (req, res) => {
         res.end()   
 })
 
+//Creates Account
 app.post('/user/create', (req, res) => {
     firebase.auth().createUser({
         email: req.body.email,
@@ -205,6 +164,7 @@ app.post('/user/create', (req, res) => {
 
 })
 
+//Delete account
 app.post('/user/delete', (req, res) => {
     firebase.auth().deleteUser(uid=req.body.uid)
   .then(function() {
