@@ -18,16 +18,32 @@ export default class Drive extends Component{
             end: `${this.item.geometry.location.lng}, ${this.item.geometry.location.lat}`
         })
     }
+    mark_Complete = () => {
+        fetch('http://10.0.2.2:3000/package/finish', {
+            method: 'POST',
+            dataType: 'json',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id:id.toString()
+            })
+        }).then( res => res.json().then(resJson => {
+            this.props.navigation.navigate('Home')
+        }))
+    }
 
     render = () => {
 
         console.log(this.item)
         
         return(
-            <View>
-                <Text style={styles.fontSize} >Step 1</Text>
+            <View style={styles.container} >
+                <Text style={styles.bold} >Step 1</Text>
                 <Button onPress={this.goto_Destination} title="Open in Maps"></Button>    
-
+                <Text style={styles.bold}>Step2</Text>
+                <Button onPress={this.mark_Complete} title="Mark as complete" ></Button>
             </View>
         )
     }
@@ -39,5 +55,8 @@ const styles = StyleSheet.create({
     },
     bold: {
         fontSize: 30
+    },
+    container: {
+        flex: 1
     }
 })

@@ -56,6 +56,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
 //This occurs when the client puts in a request for their donation to be picked up
+
 app.post('/client/request', function(req, res){
     //req.body = example_request;
     
@@ -146,7 +147,6 @@ app.post('/package/deliver', (req, res) => {
                         })
                     }
                 })
-            // var updateComplete = pkgRef.update({complete: true}) ;   
             }
         })
         .catch(err => {
@@ -155,15 +155,22 @@ app.post('/package/deliver', (req, res) => {
         });
 })
 
-app.post('/package/done', (req, res) => {
+
+app.post('/package/finish', (req, res) => {
+
     var pkgRef = db.collection('packages').doc(req.body.id);
-    pkgRef.get().then(doc => {
-        console.log(doc)
+    var getDoc = pkgRef.get()
+        .then(doc => {
+            if (!doc.exists) {
+
+                console.log('No such document!');
+            } else {
+                var updateComplete = pkgRef.update({complete: true}) ;  
+            }
+        })
+        res.end()
     })
-    // pkgRef.update({complete: true}).then(doc => {
-    //     console.log(doc)
-    // })
-})
+
 
 
 //Update account 
@@ -183,7 +190,7 @@ app.post('/user/update', (req, res) => {
         .catch(function(error) {
           console.log('Error updating user:', error);
         });
-        res.end()   
+        res.send({success:true})
 })
 
 //Creates Account

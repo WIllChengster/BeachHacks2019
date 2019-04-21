@@ -8,7 +8,7 @@ import Drive from './screens/drive'
 
 
 const MainNavigator = createStackNavigator({
-  // Home: {screen: Home},
+  Home: {screen: Home},
   AvailablePackages: {screen: AvailablePackages},
   ChooseLocation: {screen: ChooseLocation},
   Drive: {screen: Drive}
