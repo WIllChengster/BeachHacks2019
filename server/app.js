@@ -13,7 +13,6 @@ firebase.initializeApp({
     databaseURL: "https://beachhackstim.firebaseio.com"
 });
 
-
 const db = firebase.firestore();
 
 function addUserInfo(User_name, pkg_desc, addy, lat, long){
@@ -84,11 +83,11 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 // Use = for int and others
 //Use : for strings
 const example_request = {
-    Name : "Chanel Mendoza",
-    Package_description : "Small size shirts",
-    Latitude : 83.1234,
-    Longitude : 0.5134,
-    Address : "10091 Calgate Road, Tustin California"
+    Name : "Buzz Lightyear",
+    Package_description : "Socks",
+    Latitude : 33.738690,
+    Longitude : -117.837820,
+    Address : "10091 Montego way, Santa Ana Ca"
     
 }
 
@@ -131,26 +130,94 @@ app.get('/driver/looking', function (req, res) {
 //donation center
 app.post('/package/deliver', (req, res) => {
     //req.body.lat req.body.long
-    axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${req.body.lat + "," + req.body.long}&rankby=distance&keyword=clothes+donation&key=AIzaSyBwjclPeS40gutkt8N4-TbrISt1qFJJzeA`)
-    .then(function(res){
-        let closestStore = res.data.results[0].vicinity
-        console.log("Closest donation location to client  : " + closestStore)
+    //req.body.id
 
-    })
+    var pkgRef = db.collection('packages').doc(req.body.id);
+    var getDoc = pkgRef.get()
+        .then(doc => {
+            if (!doc.exists) {
+
+                console.log('No such document!');
+            } else {
+
+                let lat = doc.data().Latitude
+                let long = doc.data().Longitude
+                
+                axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat + "," + long}&rankby=distance&keyword=clothes+donation&key=AIzaSyBwjclPeS40gutkt8N4-TbrISt1qFJJzeA`)
+                .then(function(res){
+                    
+                    if(res.data.results[0] != null){
+                    console.log(res.data.results[0].vicinity)
+                    console.log(res.data.results[1].vicinity)
+                    console.log(res.data.results[2].vicinity)
+                    }
+                    else{
+                        console.log("There are no donation centers in range!")
+                    }
+                })
+            }
+        })
+        .catch(err => {
+            console.log('Error getting document', err);
+        });
+
+
+
     res.end()
+})
+
+app.post('/user/update', (req, res) => {
+    firebase.auth().updateUser(uid=req.body.uid, {
+        
+        email: req.body.email,
+        phoneNumber: '+'+req.body.phoneNumber,
+        password: req.body.password,
+        displayName: req.body.displayName,
+    
+      })
+        .then(function(userRecord) {
+          // See the UserRecord reference doc for the contents of userRecord.
+          console.log('Successfully updated user', userRecord.toJSON());
+        })
+        .catch(function(error) {
+          console.log('Error updating user:', error);
+        });
+        res.end()   
+})
+
+app.post('/user/create', (req, res) => {
+    firebase.auth().createUser({
+        email: req.body.email,
+        emailVerified: false,
+        phoneNumber: '+'+req.body.phoneNumber,
+        password: req.body.password,
+        displayName: req.body.displayName,
+        disabled: false
+      })
+        .then(function(userRecord) {
+          // See the UserRecord reference doc for the contents of userRecord.
+          console.log('Successfully created new user:', userRecord.uid);
+        })
+        .catch(function(error) {
+          console.log('Error creating new user:', error);
+        });
+        res.end()    
+
+})
+
+app.post('/user/delete', (req, res) => {
+    firebase.auth().deleteUser(uid=req.body.uid)
+  .then(function() {
+    console.log('Successfully deleted user');
+  })
+  .catch(function(error) {
+    console.log('Error deleting user:', error);
+  });
+  res.end()
 })
 
 
 app.listen(3000, () => {
     console.log('listening to port 3000')
 } )
-/*
-// Geocode an address.
-googleMapsClient.geocode({
-    address: '16568 Montego Way, Tustin, CA'
-  }, function(err, response) {
-    if (!err) {
-      console.log(response.json.results);
-    }
-  });
-*/
+
