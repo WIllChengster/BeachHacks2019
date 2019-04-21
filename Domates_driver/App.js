@@ -1,6 +1,6 @@
 import Home from './screens/home'
 import AvailablePackages from './screens/available_packages'
-import Drive from './screens/drive';
+import ChooseLocation from './screens/chooseLocation';
 import { createStackNavigator, createAppContainer } from 'react-navigation'
 
 
@@ -10,7 +10,7 @@ import { createStackNavigator, createAppContainer } from 'react-navigation'
 const MainNavigator = createStackNavigator({
   // Home: {screen: Home},
   AvailablePackages: {screen: AvailablePackages},
-  Drive: {screen: Drive},
+  ChooseLocation: {screen: ChooseLocation},
 }, {
 	// headerMode: 'none'
 })

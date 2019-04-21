@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
-import Bananas from '../components/bananas'; // map image
+import Map from '../components/Map'; 
 
 export default class HomeScreen extends React.Component {
     render() {
         return (
         <View style={styles.container}>
-            <Bananas></Bananas>
+            <Map></Map>
             <Text style={styles.welcome}>Welcome to Domates!</Text>
             <View style={styles.bottom}>
                 <TouchableOpacity onPress={()=> this.props.navigation.navigate('DonationForm')}>
@@ -31,6 +31,9 @@ const styles = StyleSheet.create({
         fontFamily: 'sans-serif-light',
         textAlign: 'center',
         margin: 10,
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        borderRadius: 10,
+        padding: 10,
     },
     bottom: {
         flex: 1,

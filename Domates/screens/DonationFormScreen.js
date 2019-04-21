@@ -7,8 +7,33 @@ export default class DonationFormScreen extends Component {
         this.state = {
             category: "Category",
             description: "Enter a description",
+            address: "Address"
         }
     }
+
+    packageInformation = () => {
+        console.log('I clicked a button')
+        fetch ('http://10.0.2.2:3000/client/request', {
+            method: 'POST',
+            dataType: 'json',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify ({
+                Name: this.state.category,
+                Package_description: this.state.description,
+                Latitude: 33.7701,
+                Longitude: -118.1937,
+                Address: this.state.address
+            })
+        }).then(res => {
+            console.log(res)
+            this.props.navigation.navigate('Login')
+        })
+    }
+    
+
     render() {
         return (
         <View style={styles.container}>
@@ -17,7 +42,7 @@ export default class DonationFormScreen extends Component {
 
             <Picker
                 selectedValue = {this.state.category}
-                onValueChange = {(itemValue, itemIndex) =>
+                onValueChange = {(itemValue) =>
                     this.setState({category: itemValue})
                 }
                 prompt = {"Categories"}
@@ -39,10 +64,19 @@ export default class DonationFormScreen extends Component {
                 style={styles.description}
                 onChangeText = {(description) => this.setState({description})}
                 multiline = {true}
+                maxLength = {396}
             ></TextInput>
 
+            <Text style={styles.subtitle}>Enter the Address:</Text>
+            <TextInput
+                style={styles.address}
+                onChangeText = {(address) => this.setState({address})}
+                multiline = {true}
+                maxLength = {200}
+            ></TextInput>
+            
             <View style={styles.bottom}>
-                <TouchableOpacity onPress={()=> this.props.navigation.navigate('DonationForm')}>
+                <TouchableOpacity onPress={this.packageInformation}>
                     <Text style={styles.button}>SUBMIT</Text>
                 </TouchableOpacity>
             </View>
@@ -80,6 +114,13 @@ const styles = StyleSheet.create({
     description: {
         backgroundColor: '#FFF',
         height: 200, 
+        width: 300,
+        borderRadius: 10,
+        fontFamily: 'sans-serif-light',
+    },
+    address: {
+        backgroundColor: '#FFF',
+        height: 100, 
         width: 300,
         borderRadius: 10,
         fontFamily: 'sans-serif-light',
