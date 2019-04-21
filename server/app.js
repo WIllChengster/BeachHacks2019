@@ -1,3 +1,9 @@
+  //https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=33.7386669,-117.8399826&radius=500&keyword=clothes+donation+place&key=AIzaSyBwjclPeS40gutkt8N4-TbrISt1qFJJzeA
+ // var key = 'AIzaSyBwjclPeS40gutkt8N4-TbrISt1qFJJzeA';
+
+ 
+var axios = require('axios')
+var bodyParser = require('body-parser')
 var firebase = require("firebase-admin");
 
 var serviceAccount = require("./serviceAccountKey.json");
@@ -7,14 +13,12 @@ firebase.initializeApp({
     databaseURL: "https://beachhackstim.firebaseio.com"
 });
 
- 
-const db = firebase.firestore();
-// const functions = require('firebase-functions');
 
+const db = firebase.firestore();
 
 function addUserInfo(User_name, pkg_desc, addy, lat, long){
 
-    var docRef = db.collection('users').doc(User_name);
+    var docRef = db.collection('packages').doc();
 
     var setUser = docRef.set({
         Name: User_name,
@@ -24,23 +28,14 @@ function addUserInfo(User_name, pkg_desc, addy, lat, long){
         Longitude: long
     })
 
-
 }
 
-/*
-function getUserInfo(){
-    var userID = firebase.auth().currentUser.uid;
-    return firebase.database().ref('/users/' + userID).once('value').then(function(snapshot) {
-        var username = (snapshot.val() && snapshot.val.username) || 'Anonymous';
-    })
-}
-*/
 
 
 //This is to reads all information from database 
 
 function ReturnDatabase(){
-    db.collection('users').get()
+    db.collection('packages').get()
     .then((snapshot) => {
 
         
@@ -56,7 +51,7 @@ function ReturnDatabase(){
 
 //Returns one user and all their respective data.
 function ReturnOneUser(User_name){
-    var usersRef = db.collection('users').doc(User_name);
+    var usersRef = db.collection('packages').doc(User_name);
     var getDoc = usersRef.get()
         .then(doc => {
             if (!doc.exists) {
@@ -78,48 +73,28 @@ function ReturnOneUser(User_name){
 
 
 
-// function ReturnOneData(){
-//     // db.collection('users').get()
-//     // .then((snapshot) => {
-//     //  snapshot.forEach((doc) => {
-//     //       console.log(doc.id, '=>', doc.data());
-//     //  });
-//     //  })
-//     //  .catch((err) => {
-//     //   console.log('Error getting documents', err);
-//     //  });
-    
-//   exports.myFunctionName = functions.firestore
-
-//   .document('users/').onWrite((change, context) => {
-
-//     console.log(change);
-
-//   });
-
-// };
-
 ///////////////////////////////// test ^^^
 
 
 const express = require('express');
 const app = express();
-
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 //This is to test
 // Use = for int and others
 //Use : for strings
 const example_request = {
-    Name : "Matthew Pham",
-    Package_description : "medium size shirts",
-    Latitude : 32.4412,
-    Longitude : -14.5134,
-    Address : "16568 Montedsafdsfgo Lane, Tustin California"
+    Name : "Chanel Mendoza",
+    Package_description : "Small size shirts",
+    Latitude : 83.1234,
+    Longitude : 0.5134,
+    Address : "10091 Calgate Road, Tustin California"
     
 }
 
 
-//This is the route that we want user to request in client app
-app.get('/yee', function(req, res){
+//This occurs when the client puts in a request for their donation to be picked up
+app.get('/client/request', function(req, res){
     req.body = example_request;
 
     //This unpacks the object
@@ -134,14 +109,13 @@ app.get('/yee', function(req, res){
     res.send( 'Request Complete!')
 })
 
+//This adds all current clients to the queue so drivers can choose which donation to pick up
 app.get('/driver/looking', function (req, res) {
-    db.collection('users').get()
+    db.collection('packages').get()
         .then((snapshot) => {
-
             let documents = []
             snapshot.forEach((doc) => {
-
-                documents.push(doc.data())
+                documents.push(doc.data())             
             });
             res.json(documents)
 
@@ -153,11 +127,30 @@ app.get('/driver/looking', function (req, res) {
 
 })
 
-
+//This occurs when a driver accepts a request to donate.  This takes the donation's address and finds the closest
+//donation center
 app.post('/package/deliver', (req, res) => {
+    //req.body.lat req.body.long
+    axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${req.body.lat + "," + req.body.long}&rankby=distance&keyword=clothes+donation&key=AIzaSyBwjclPeS40gutkt8N4-TbrISt1qFJJzeA`)
+    .then(function(res){
+        let closestStore = res.data.results[0].vicinity
+        console.log("Closest donation location to client  : " + closestStore)
 
+    })
+    res.end()
 })
+
 
 app.listen(3000, () => {
     console.log('listening to port 3000')
 } )
+/*
+// Geocode an address.
+googleMapsClient.geocode({
+    address: '16568 Montego Way, Tustin, CA'
+  }, function(err, response) {
+    if (!err) {
+      console.log(response.json.results);
+    }
+  });
+*/

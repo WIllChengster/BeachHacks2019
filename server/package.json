@@ -10,8 +10,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "firebase": "^5.10.0",
-    "firebase-admin": "^7.3.0"
+    "firebase-admin": "^7.3.0",
+    "googleplaces": "^0.6.1",
+    "node-googleplaces": "^0.1.2"
   }
 }
