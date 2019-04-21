@@ -1,8 +1,17 @@
 import React, {Component} from 'react';
-import {StyleSheet, Dimensions} from 'react-native';
+import {StyleSheet, Dimensions, PermissionsAndroid} from 'react-native';
 import MapView from 'react-native-maps';
 
 export default class Map extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            latitude: 33.7701,
+            longitude: -118.1937,
+            distance: 5
+        }
+    }
+
     getDelta(lat, lon, distance) {
         const oneDegreeOfLatitudeInMeters = 111.32 * 1000;
         distance = distance * 10000
@@ -21,11 +30,17 @@ export default class Map extends Component {
             <MapView
                 style = {styles.map}
                 region = {
-                    this.getDelta(33.7701, -118.1937, 5)
+                    this.getDelta(this.state.latitude, this.state.longitude, this.state.distance)
                 }
                 showsUserLocation = {true}
                 showsMyLocationButton={true}
-                
+                onMapReady={() => {
+                    PermissionsAndroid.request(
+                      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+                    ).then(granted => {
+                      alert(granted) // just to ensure that permissions were granted
+                    });
+                  }}
             />
         );
     }
