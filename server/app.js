@@ -95,7 +95,7 @@ const example_request = {
 
 //This occurs when the client puts in a request for their donation to be picked up
 app.get('/client/request', function(req, res){
-    req.body = example_request;
+    // req.body = example_request;
 
     //This unpacks the object
     let Name = req.body.Name
@@ -106,7 +106,7 @@ app.get('/client/request', function(req, res){
 
     addUserInfo(Name, Package_description, Address, Latitude, Longitude)
 
-    res.send( 'Request Complete!')
+    res.send( {success: true} )
 })
 
 //This adds all current clients to the queue so drivers can choose which donation to pick up
@@ -115,7 +115,7 @@ app.get('/driver/looking', function (req, res) {
         .then((snapshot) => {
             let documents = []
             snapshot.forEach((doc) => {
-                documents.push(doc.data())             
+                documents.push({id:doc.id ,data:doc.data()})
             });
             res.json(documents)
 
@@ -132,12 +132,15 @@ app.get('/driver/looking', function (req, res) {
 app.post('/package/deliver', (req, res) => {
     //req.body.lat req.body.long
     axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${req.body.lat + "," + req.body.long}&rankby=distance&keyword=clothes+donation&key=AIzaSyBwjclPeS40gutkt8N4-TbrISt1qFJJzeA`)
-    .then(function(res){
-        let closestStore = res.data.results[0].vicinity
-        console.log("Closest donation location to client  : " + closestStore)
-
+    .then(function(axRes){
+        console.log(axRes.data)
+        res.json({
+            destinations: [
+                axRes.data.results[0],
+                axRes.data.results[1],
+                axRes.data.results[2],
+        ]})
     })
-    res.end()
 })
 
 
