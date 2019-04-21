@@ -50,7 +50,7 @@ const example_request = {
 
 
 //This occurs when the client puts in a request for their donation to be picked up
-app.get('/client/request', function(req, res){
+app.post('/client/request', function(req, res){
     // req.body = example_request;
 
     //This unpacks the object
