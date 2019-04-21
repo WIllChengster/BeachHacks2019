@@ -4,7 +4,7 @@ import HomeScreen from './screens/HomeScreen';
 import DonationFormScreen from './screens/DonationFormScreen';
 
 const MainNavigator = createStackNavigator({
-  Login: {screen: LoginScreen},
+  //Login: {screen: LoginScreen},
   Home: {screen: HomeScreen},
   DonationForm: {screen: DonationFormScreen},
 });

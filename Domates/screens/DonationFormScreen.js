@@ -29,7 +29,7 @@ export default class DonationFormScreen extends Component {
             })
         }).then(res => {
             console.log(res)
-            this.props.navigation.navigate('Login')
+            this.props.navigation.navigate('Home')
         })
     }
     
