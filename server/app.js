@@ -45,26 +45,34 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 //This is to test
 // Use = for int and others
 //Use : for strings
-const example_request = {
-    Name : "Big McBiggies",
-    Package_description : "Hanes Underwear",
+// const example_request = {
+//     Name : "Big McBiggies",
+//     Package_description : "Hanes Underwear",
 
-    Address : "5432 Hayter Ave Lakewood, Ca 90712",
-    complete : false
+//     Address : "5432 Hayter Ave Lakewood, Ca 90712",
+//     complete : false
     
-}
+// }
 
 
 //This occurs when the client puts in a request for their donation to be picked up
+<<<<<<< HEAD
 app.get('/client/request', function(req, res){
     
+=======
+app.post('/client/request', function(req, res){
+    //req.body = example_request;
+>>>>>>> b698a4acc3c88773566a6e455cd9c14d34381408
     
     //This unpacks the object
     let Name = req.body.Name
     let Package_description = req.body.Package_description
     let Address = req.body.Address
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> b698a4acc3c88773566a6e455cd9c14d34381408
     axios('https://maps.googleapis.com/maps/api/geocode/json?address='+ Address.split(' ').join('+') + '&key=AIzaSyBwjclPeS40gutkt8N4-TbrISt1qFJJzeA')
     .then(results => {
         console.log('body:', results.data); // Print the HTML for the Google homepage.

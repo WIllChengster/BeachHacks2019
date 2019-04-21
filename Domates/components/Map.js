@@ -38,7 +38,7 @@ export default class Map extends Component {
                     PermissionsAndroid.request(
                       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
                     ).then(granted => {
-                      alert(granted) // just to ensure that permissions were granted
+                      //alert(granted) // just to ensure that permissions were granted
                     });
                   }}
             />
