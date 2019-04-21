@@ -3,6 +3,10 @@ import {StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
 import Map from '../components/Map'; 
 
 export default class HomeScreen extends React.Component {
+    static navigationOptions = {
+        //To hide the ActionBar/NavigationBar
+        header: null,
+    };
     render() {
         return (
         <View style={styles.container}>

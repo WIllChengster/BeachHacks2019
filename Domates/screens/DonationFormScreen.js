@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Button, Picker, TextInput, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, Picker, TextInput, TouchableOpacity, ToastAndroid} from 'react-native';
 
 export default class DonationFormScreen extends Component {
     constructor(props) {
@@ -12,7 +12,6 @@ export default class DonationFormScreen extends Component {
     }
 
     packageInformation = () => {
-        console.log('I clicked a button')
         fetch ('http://10.0.2.2:3000/client/request', {
             method: 'POST',
             dataType: 'json',
@@ -28,8 +27,8 @@ export default class DonationFormScreen extends Component {
                 Address: this.state.address
             })
         }).then(res => {
-            console.log(res)
             this.props.navigation.navigate('Home')
+            ToastAndroid.show('Sent package to database', ToastAndroid.SHORT);
         })
     }
     
