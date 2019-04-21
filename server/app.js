@@ -7,7 +7,7 @@ firebase.initializeApp({
     databaseURL: "https://beachhackstim.firebaseio.com"
 });
 
-
+ 
 const db = firebase.firestore();
 // const functions = require('firebase-functions');
 
