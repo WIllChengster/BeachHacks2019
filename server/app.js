@@ -8,6 +8,7 @@ var firebase = require("firebase-admin");
 
 var serviceAccount = require("./serviceAccountKey.json");
 
+
 firebase.initializeApp({
     credential: firebase.credential.cert(serviceAccount),
     databaseURL: "https://beachhackstim.firebaseio.com"
@@ -26,7 +27,11 @@ function addUserInfo(User_name, pkg_desc, addy, lat, long){
         Latitude: lat,
         Longitude: long,
         complete: false
+
+        
     })
+
+
 
 }
 
@@ -41,11 +46,10 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 // Use = for int and others
 //Use : for strings
 const example_request = {
-    Name : "Buzz THICCyear",
-    Package_description : "Socks",
-    Latitude : 33.738690,
-    Longitude : -117.837820,
-    Address : "10091 Montego way, Santa Ana Ca",
+    Name : "Big McBiggies",
+    Package_description : "Hanes Underwear",
+
+    Address : "5432 Hayter Ave Lakewood, Ca 90712",
     complete : false
     
 }
@@ -54,18 +58,32 @@ const example_request = {
 //This occurs when the client puts in a request for their donation to be picked up
 app.get('/client/request', function(req, res){
     req.body = example_request;
-
+    
     //This unpacks the object
     let Name = req.body.Name
     let Package_description = req.body.Package_description
-    let Latitude = req.body.Latitude
-    let Longitude = req.body.Longitude
     let Address = req.body.Address
-    let complete = false
 
-    addUserInfo(Name, Package_description, Address, Latitude, Longitude)
+    var request = require('request');
+    axios('https://maps.googleapis.com/maps/api/geocode/json?address='+ Address.split(' ').join('+') + '&key=AIzaSyBwjclPeS40gutkt8N4-TbrISt1qFJJzeA')
+    .then(results => {
+        console.log('body:', results.data); // Print the HTML for the Google homepage.
 
-    res.send( 'Request Complete!')
+        Latitude = results.data.results[0].geometry.location.lat
+        console.log(Latitude)
+        Longitude = results.data.results[0].geometry.location.lng
+        console.log(Longitude)
+
+        addUserInfo(Name, Package_description, Address, Latitude, Longitude)
+
+        res.send( {success: true} )
+    })
+    
+    
+
+
+
+
 })
 
 //This adds all current clients to the queue so drivers can choose which donation to pick up
@@ -75,7 +93,7 @@ app.get('/driver/looking', function (req, res) {
             let documents = []
             snapshot.forEach((doc) => {
                 if(doc.data().complete != true){
-                    documents.push(doc.data())
+                    documents.push({id: doc.id, data:doc.data()})
                 }
                              
             });
@@ -93,6 +111,7 @@ app.get('/driver/looking', function (req, res) {
 //donation center
 app.post('/package/deliver', (req, res) => {
     //req.body.lat req.body.long
+
     //req.body.id
 
     var pkgRef = db.collection('packages').doc(req.body.id);
@@ -106,17 +125,26 @@ app.post('/package/deliver', (req, res) => {
                 let lat = doc.data().Latitude
                 let long = doc.data().Longitude
                 
-                axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat + "," + long}&rankby=distance&keyword=clothes+donation&key=AIzaSyBwjclPeS40gutkt8N4-TbrISt1qFJJzeA`)
-                .then(function(res){
-                    
-                    if(res.data.results[0] != null){
-                    console.log(res.data.results[0].vicinity)
-                    console.log(res.data.results[1].vicinity)
-                    console.log(res.data.results[2].vicinity)
-                    
+                axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat + "," + long}&opennow&rankby=distance&keyword=clothes+donation&key=AIzaSyBwjclPeS40gutkt8N4-TbrISt1qFJJzeA`)
+                .then(function(axRes){
+                    console.log(axRes.data)
+                    if(axRes.data.results[0] != null){
+                    console.log(axRes.data.results[0].vicinity)
+                    console.log(axRes.data.results[1].vicinity)
+                    console.log(axRes.data.results[2].vicinity)
+
+                    res.json({
+                        destinations: [
+                            axRes.data.results[0],
+                            axRes.data.results[1],
+                            axRes.data.results[2],
+                    ]})
                     }
                     else{
-                        console.log("There are no donation centers in range!")
+                        console.log("There are no donation centers in range!");
+                        res.json({
+                            success: false
+                        })
                     }
                 })
             var updateComplete = pkgRef.update({complete: true}) ;   
@@ -126,9 +154,6 @@ app.post('/package/deliver', (req, res) => {
             console.log('Error getting document', err);
         });
 
-
-
-    res.end()
 })
 
 //Update account 
@@ -156,7 +181,7 @@ app.post('/user/create', (req, res) => {
     firebase.auth().createUser({
         email: req.body.email,
         emailVerified: false,
-        phoneNumber: '+'+req.body.phoneNumber,
+        phoneNumber: req.body.phoneNumber,
         password: req.body.password,
         displayName: req.body.displayName,
         disabled: false
