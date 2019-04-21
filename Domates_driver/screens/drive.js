@@ -32,7 +32,11 @@ const exprected_resp = {
 }
 
 export default class Drive extends Component{
+    
     render(){
+        const data = this.props.navigation.getParam('data', 'no_data');
+        console.log(data)
+
         return(
             <View>
                 <Text>Driveradajkdaw</Text>

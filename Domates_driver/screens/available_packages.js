@@ -41,10 +41,9 @@ export default class AvailablePackages extends Component{
                 id:id.toString()
             })
         }).then( res => res.json().then(resJson => {
-            console.log(id)
-            console.log(resJson.destinations[0])
-
-            this.props.navigation.navigate('Drive')
+            this.props.navigation.navigate('Drive', {
+                data: resJson
+            } )
         }))
     }
 
