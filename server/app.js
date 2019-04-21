@@ -59,17 +59,12 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 app.post('/client/request', function(req, res){
     //req.body = example_request;
->>>>>>> b698a4acc3c88773566a6e455cd9c14d34381408
     
     //This unpacks the object
     let Name = req.body.Name
     let Package_description = req.body.Package_description
     let Address = req.body.Address
 
-<<<<<<< HEAD
-
-=======
->>>>>>> b698a4acc3c88773566a6e455cd9c14d34381408
     axios('https://maps.googleapis.com/maps/api/geocode/json?address='+ Address.split(' ').join('+') + '&key=AIzaSyBwjclPeS40gutkt8N4-TbrISt1qFJJzeA')
     .then(results => {
         console.log('body:', results.data); // Print the HTML for the Google homepage.
@@ -152,7 +147,6 @@ app.post('/package/deliver', (req, res) => {
                         })
                     }
                 })
-            var updateComplete = pkgRef.update({complete: true}) ;   
             }
         })
         .catch(err => {
@@ -160,6 +154,23 @@ app.post('/package/deliver', (req, res) => {
         });
 
 })
+
+app.post('/package/finish', (req, res) => {
+
+    var pkgRef = db.collection('packages').doc(req.body.id);
+    var getDoc = pkgRef.get()
+        .then(doc => {
+            if (!doc.exists) {
+
+                console.log('No such document!');
+            } else {
+                var updateComplete = pkgRef.update({complete: true}) ;  
+            }
+        })
+        res.end()
+    })
+
+
 
 //Update account 
 app.post('/user/update', (req, res) => {
