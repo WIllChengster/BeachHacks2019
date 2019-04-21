@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet,  } from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight  } from 'react-native';
 
 
 
 export default class ChooseLocation extends Component{
+
+    _press = (item) => {
+        this.props.navigation.navigate('Drive', {item})
+    }
     
     render(){
         const data = this.props.navigation.getParam('data', 'no_data');
@@ -17,10 +21,12 @@ export default class ChooseLocation extends Component{
 
         const location_map = data.destinations.map((item, index) => {
             return(
-                <View key={index} style={styles.location_container} >
-                    <Text>{item.name}</Text>
-                    <Text>{item.vicinity}</Text>
-                </View>
+                <TouchableHighlight key={index} style={styles.location_container} onPress={()=> this._press(item)} underlayColor='lightgray' >
+                    <View key={index} >
+                        <Text>{item.name}</Text>
+                        <Text>{item.vicinity}</Text>
+                    </View>
+                </TouchableHighlight>
             )
         })
         
@@ -55,6 +61,7 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
         borderBottomColor: 'black',
         borderWidth: 1,
-        padding: 10
+        padding: 10,
+        justifyContent:'flex-start'
     },
   });

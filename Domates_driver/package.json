@@ -12,6 +12,7 @@
     "react-native-gesture-handler": "^1.1.0",
     "react-native-maps": "^0.24.2",
     "react-native-maps-navigation": "0.0.14",
+    "react-native-open-maps": "^0.3.3",
     "react-navigation": "^3.8.1"
   },
   "devDependencies": {

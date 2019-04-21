@@ -1,28 +1,43 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
-// import MapViewDirections from 'react-native-maps-directions';
+import {View, StyleSheet, Button, Dimensions, Text} from 'react-native';
+import openMap from 'react-native-open-maps';
 
-const { width, height } = Dimensions.get('window');
+
 
 export default class Drive extends Component{
+    constructor(props){
+        super(props);
+        this.item = this.props.navigation.getParam('item', 'no_item');
+    }
+    goto_Destination = () => {
+        console.log(this.item.geometry.location.lat, this.item.geometry.location.lng)
+        openMap({
+            latitude: this.item.geometry.location.lat,
+            longitude: this.item.geometry.location.lng,
+            start: "My Location",
+            end: `${this.item.geometry.location.lng}, ${this.item.geometry.location.lat}`
+        })
+    }
+
     render = () => {
+
+        console.log(this.item)
+        
         return(
             <View>
+                <Text style={styles.fontSize} >Step 1</Text>
+                <Button onPress={this.goto_Destination} title="Open in Maps"></Button>    
 
-
-                <MapView
-                    style={styles.map}
-                    provider={PROVIDER_GOOGLE}
-                    region={{
-                        latitude: exprected_resp.geometry.location.lat,
-                        longitude: exprected_resp.geometry.location.lng,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0922 * (width / height),
-                    }}
-                    showsUserLocation
-                />                
             </View>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    map: {
+        flex: 1
+    },
+    bold: {
+        fontSize: 30
+    }
+})

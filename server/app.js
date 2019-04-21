@@ -146,14 +146,25 @@ app.post('/package/deliver', (req, res) => {
                         })
                     }
                 })
-            var updateComplete = pkgRef.update({complete: true}) ;   
+            // var updateComplete = pkgRef.update({complete: true}) ;   
             }
         })
         .catch(err => {
             console.log('Error getting document', err);
-        });
 
+        });
 })
+
+app.post('/package/done', (req, res) => {
+    var pkgRef = db.collection('packages').doc(req.body.id);
+    pkgRef.get().then(doc => {
+        console.log(doc)
+    })
+    // pkgRef.update({complete: true}).then(doc => {
+    //     console.log(doc)
+    // })
+})
+
 
 //Update account 
 app.post('/user/update', (req, res) => {
